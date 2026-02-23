@@ -9,6 +9,9 @@ const movieRoutes = require('./routes/movieRoutes');
 const seriesRoutes = require('./routes/seriesRoutes');
 const interactionRoutes = require('./routes/interactionRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+// --- ÚJ SOR: Importáljuk a searchRoute-ot ---
+const searchRoutes = require('./routes/searchRoutes'); 
+// ----------------------------------------------
 
 const app = express();
 
@@ -28,6 +31,9 @@ app.use('/api/filmek', movieRoutes);
 app.use('/api/sorozatok', seriesRoutes);
 app.use('/api/interactions', interactionRoutes);
 app.use('/api/admin', adminRoutes);
+// --- ÚJ SOR: Bekötjük a keresőt az /api alá ---
+app.use('/api', searchRoutes); 
+// ----------------------------------------------
 
 app.use((req, res) => {
     res.status(404).json({ message: 'Az útvonal nem található' });

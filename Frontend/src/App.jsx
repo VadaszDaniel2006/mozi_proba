@@ -12,14 +12,15 @@ import ProfilSzerkeszto from './components/ProfilSzerkeszto';
 import Sidebar from './components/Sidebar';
 import AdminDashboard from './components/AdminDashboard';
 import ReviewsSidebar from './components/ReviewsSidebar'; 
+import Kereses from './pages/Kereses';
+import Adatlap from './pages/Adatlap'; // <-- ÚJ: Adatlap importálása
 
 import './App.css'; 
 
-// --- HERO SLIDE (MÓDOSÍTVA: interactionUpdate prop figyelése) ---
+// --- HERO SLIDE ---
 const HeroSlide = ({ movie, isActive, user, openStreaming, handleAddToFav, handleRemoveFromFav, handleAddToMyList, handleRemoveFromList, openTrailer, interactionUpdate }) => {
     const [status, setStatus] = useState({ favorite: false, listed: false });
 
-    // Most már figyeljük az 'interactionUpdate'-et is! Ha változik, újra lekérdez.
     useEffect(() => {
         const fetchStatus = async () => {
             if (!user || !movie) return;
@@ -35,7 +36,7 @@ const HeroSlide = ({ movie, isActive, user, openStreaming, handleAddToFav, handl
             } catch (error) { console.error(error); }
         };
         fetchStatus();
-    }, [user, movie, interactionUpdate]); // <--- ITT A KULCS
+    }, [user, movie, interactionUpdate]); 
 
     const toggleFav = (e) => {
         if(!user) return handleAddToFav(movie); 
@@ -101,9 +102,6 @@ function App() {
   const [sidebarItems, setSidebarItems] = useState([]); 
   const [reviewsSidebarOpen, setReviewsSidebarOpen] = useState(false);
   const [reviewMovie, setReviewMovie] = useState(null); 
-
-  // --- ÚJ STATE A SZINKRONIZÁCIÓHOZ ---
-  // Ez egy szám, amit növelünk minden változáskor.
   const [interactionUpdate, setInteractionUpdate] = useState(0);
 
   const fetchAllData = useCallback(async () => {
@@ -138,7 +136,6 @@ function App() {
 
   const openSidebar = (type) => { setSidebarType(type); setIsSidebarOpen(true); fetchSidebarData(type); };
 
-  // --- TÖRLÉS A SIDEBARBÓL ---
   const handleDeleteItem = async (itemId) => {
       if (!user) return;
       const endpoint = sidebarType === 'favorites' ? 'favorite' : 'mylist';
@@ -150,7 +147,6 @@ function App() {
           if(response.ok) { 
               fetchSidebarData(sidebarType); 
               showNotification("Sikeres törlés.", "success");
-              // JELZÜNK A KÁRTYÁKNAK, HOGY FRISSÜLJENEK!
               setInteractionUpdate(prev => prev + 1);
           } else { showNotification("Hiba a törléskor.", "error"); }
       } catch (err) { showNotification("Szerver hiba.", "error"); }
@@ -172,7 +168,6 @@ function App() {
       } else { openInfo(partialItem); }
   };
 
-  // --- MŰVELETEK ---
   const handleAddToFav = async (movie) => {
     if (!user) { showNotification("Jelentkezz be a kedvencekhez!", "info"); setAuthModalOpen(true); return; }
     const isSeries = movie.evadok_szama !== undefined || movie.sorozat_id !== undefined;
@@ -184,7 +179,7 @@ function App() {
       });
       if (response.ok) {
           showNotification("Hozzáadva a kedvencekhez!", "success");
-          setInteractionUpdate(prev => prev + 1); // Frissítés jelzése
+          setInteractionUpdate(prev => prev + 1); 
       }
     } catch (error) { showNotification("Hiba mentéskor.", "info"); }
   };
@@ -200,7 +195,7 @@ function App() {
         });
         if (response.ok) {
             showNotification("Hozzáadva a listához!", "success");
-            setInteractionUpdate(prev => prev + 1); // Frissítés jelzése
+            setInteractionUpdate(prev => prev + 1); 
         }
     } catch (error) { showNotification("Hiba mentéskor.", "error"); }
   };
@@ -216,7 +211,7 @@ function App() {
           });
           if(response.ok) {
               showNotification("Sikeres törlés.", "success");
-              setInteractionUpdate(prev => prev + 1); // Frissítés jelzése
+              setInteractionUpdate(prev => prev + 1); 
           } else showNotification("Hiba törléskor.", "error");
       } catch (error) { showNotification("Szerver hiba.", "error"); }
   };
@@ -232,7 +227,7 @@ function App() {
           });
           if(response.ok) {
               showNotification("Sikeres törlés.", "success");
-              setInteractionUpdate(prev => prev + 1); // Frissítés jelzése
+              setInteractionUpdate(prev => prev + 1); 
           } else showNotification("Hiba törléskor.", "error");
       } catch (error) { showNotification("Szerver hiba.", "error"); }
   };
@@ -274,7 +269,7 @@ function App() {
                                         handleAddToMyList={handleAddToMyList}
                                         handleRemoveFromList={handleRemoveFromList}
                                         openTrailer={openTrailer}
-                                        interactionUpdate={interactionUpdate} // ÁTADJUK AZ UPDATE JELET
+                                        interactionUpdate={interactionUpdate} 
                                     />
                                 ))}
                             </div>
@@ -295,7 +290,7 @@ function App() {
                                 onAddToList={handleAddToMyList} 
                                 onRemoveFromList={handleRemoveFromList}
                                 onOpenReviews={openReviews}
-                                interactionUpdate={interactionUpdate} // ÁTADJUK AZ UPDATE JELET
+                                interactionUpdate={interactionUpdate} 
                             /> 
                         )}
                          {seriesData.length > 0 && ( 
@@ -312,13 +307,24 @@ function App() {
                                 onAddToList={handleAddToMyList} 
                                 onRemoveFromList={handleRemoveFromList}
                                 onOpenReviews={openReviews}
-                                interactionUpdate={interactionUpdate} // ÁTADJUK AZ UPDATE JELET
+                                interactionUpdate={interactionUpdate} 
                             /> 
                         )}
                     </div>
                 </main>
             } />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/kereses" element={<Kereses />} />
+            
+            {/* --- ÚJ ÚTVONALAK AZ ADATLAPHOZ --- */}
+            <Route path="/film/:id" element={
+                <Adatlap type="film" openStreaming={openStreaming} openTrailer={openTrailer} />
+            } />
+            <Route path="/sorozat/:id" element={
+                <Adatlap type="sorozat" openStreaming={openStreaming} openTrailer={openTrailer} />
+            } />
+            {/* ---------------------------------- */}
+            
         </Routes>
 
         <Footer />

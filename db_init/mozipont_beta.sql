@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: db:3306
--- Létrehozás ideje: 2026. Feb 21. 12:22
+-- Létrehozás ideje: 2026. Feb 23. 16:11
 -- Kiszolgáló verziója: 8.4.8
 -- PHP verzió: 8.3.30
 
@@ -97,7 +97,7 @@ CREATE TABLE `filmek` (
 
 INSERT INTO `filmek` (`id`, `cim`, `leiras`, `poszter_url`, `elozetes_url`, `megjelenes_ev`, `hossz_perc`, `rating`, `rendezo_id`, `kategoria_id`, `created_at`, `alap_rating`) VALUES
 (1, 'Dune: Part Two', 'Paul Atreides egyesíti erőit Chani-val és a fremenekkel, miközben bosszút áll azokon, akik elpusztították a családját.', 'https://image.tmdb.org/t/p/original/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg', 'Way9Dexny3w', 2024, 166, 8.8, 1, 'action', '2026-01-28 18:01:57', 8.8),
-(2, 'Oppenheimer', 'J. Robert Oppenheimer fizikus története, aki a Manhattan Terv keretében az atombomba kifejlesztésén dolgozott.', 'https://image.tmdb.org/t/p/original/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg', 'uYPbbksJxIg', 2023, 180, 4.8, 2, 'biography', '2026-01-28 18:01:57', 8.6),
+(2, 'Oppenheimer', 'J. Robert Oppenheimer fizikus története, aki a Manhattan Terv keretében az atombomba kifejlesztésén dolgozott.', 'https://image.tmdb.org/t/p/original/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg', 'uYPbbksJxIg', 2023, 180, 8.6, 2, 'biography', '2026-01-28 18:01:57', 8.6),
 (3, 'Top Gun: Maverick', 'Harminc év szolgálat után Pete \'Maverick\' Mitchell visszatér, hogy kiképezzen egy különleges egységet.', 'https://image.tmdb.org/t/p/original/62HCnUTziyWcpDaBO2i1DX17ljH.jpg', 'giXco2jaZ_4', 2022, 130, 9.2, 3, 'action', '2026-01-28 18:01:57', 8.3),
 (4, 'The Batman', 'Amikor Rébusz, a szadista sorozatgyilkos elkezd politikai figurákat gyilkolni, Batman kénytelen a Gotham alvilágában nyomozni.', 'https://image.tmdb.org/t/p/original/74xTEgt7R36Fpooo50r9T25onhq.jpg', 'mqqft2x_Aa4', 2022, 176, 7.8, 4, 'action', '2026-01-28 18:01:57', 7.8),
 (5, 'Inception', 'Egy tolvaj, aki álommegosztó technológián keresztül lop titkokat, megkapja a feladatot, hogy ültessen el egy ötletet egy vezérigazgató elméjébe.', 'https://image.tmdb.org/t/p/original/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg', 'YoHD9XEInc0', 2010, 148, 8.8, 2, 'scifi', '2026-01-28 18:01:57', 8.8),
@@ -105,44 +105,9 @@ INSERT INTO `filmek` (`id`, `cim`, `leiras`, `poszter_url`, `elozetes_url`, `meg
 (7, 'Avatar: The Way of Water', 'Jake Sully és Neytiri mindent megtesznek, hogy együtt tartsák családjukat, amikor új fenyegetés üti fel a fejét.', 'https://m.media-amazon.com/images/M/MV5BNWI0Y2NkOWEtMmM2OC00MjQ3LWI1YzItZGQxYzQ3NzI4NWZmXkEyXkFqcGc@._V1_.jpg', 'd9MyW72ELq0', 2022, 192, 7.6, 5, 'scifi', '2026-01-28 18:01:57', 7.6),
 (8, 'Spider-Man: No Way Home', 'Pókember kiléte lelepleződik, ezért Doctor Strange segítségét kéri, de a varázslat balul sül el.', 'https://image.tmdb.org/t/p/original/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg', 'JfVOs4VSpmA', 2021, 148, 8.2, 6, 'action', '2026-01-28 18:01:57', 8.2),
 (9, 'Deadpool & Wolverine', 'A fásult Wade Wilson kénytelen újra jelmezt húzni, amikor egy új fenyegetés nemcsak a világát, hanem az egész univerzumot veszélyezteti.', 'https://image.tmdb.org/t/p/original/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg', '73_1biulkYk', 2024, 128, 7.7, 7, 'action', '2026-01-28 18:01:57', 8.0),
-(10, 'Gladiator II', 'Évekkel Maximus halála után Lucius kénytelen belépni a Colosseumba, miután otthonát elfoglalják a zsarnok császárok.', 'https://m.media-amazon.com/images/M/MV5BNmJlZGIzMjEtZWE0NS00NTAxLWIyNGItNjYzYzhjMmI3ZWVmXkEyXkFqcGc@._V1_.jpg', 'IIerkFJEcuU', 2024, 148, 6.5, 8, 'action', '2026-01-28 18:01:57', 8.0),
+(10, 'Gladiator II', 'Évekkel Maximus halála után Lucius kénytelen belépni a Colosseumba, miután otthonát elfoglalják a zsarnok császárok.', 'https://m.media-amazon.com/images/M/MV5BNmJlZGIzMjEtZWE0NS00NTAxLWIyNGItNjYzYzhjMmI3ZWVmXkEyXkFqcGc@._V1_.jpg', 'IIerkFJEcuU', 2024, 148, 8.0, 8, 'action', '2026-01-28 18:01:57', 8.0),
 (11, 'Black Panther: Wakanda Forever', 'Wakanda vezetői küzdenek nemzetük védelméért a beavatkozó világhatalmakkal szemben T\'Challa király halála után.', 'https://image.tmdb.org/t/p/original/sv1xJUazXeYqALzczSZ3O6nkH75.jpg', '_Z3QKkl1WyM', 2022, 161, 7.3, 9, 'action', '2026-01-28 18:01:57', 7.3),
 (12, 'Avengers: Endgame', 'A Bosszúállók megmaradt tagjainak újra össze kell állniuk, hogy visszafordítsák Thanos tetteit és helyreállítsák az univerzum egyensúlyát.', 'https://image.tmdb.org/t/p/original/or06FN3Dka5tukK1e9sl16pB3iy.jpg', 'TcMBFSGVi1c', 2019, 181, 8.4, 10, 'action', '2026-01-28 18:01:57', 8.4);
-
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `film_gyarto_orszagok`
---
-
-CREATE TABLE `film_gyarto_orszagok` (
-  `id` int NOT NULL,
-  `film_id` int NOT NULL,
-  `nemzetiseg_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- A tábla adatainak kiíratása `film_gyarto_orszagok`
---
-
-INSERT INTO `film_gyarto_orszagok` (`id`, `film_id`, `nemzetiseg_id`) VALUES
-(1, 1, 1),
-(2, 1, 3),
-(3, 2, 1),
-(4, 2, 2),
-(5, 3, 1),
-(6, 4, 1),
-(7, 5, 1),
-(8, 5, 2),
-(9, 6, 1),
-(10, 6, 2),
-(11, 7, 1),
-(12, 8, 1),
-(13, 9, 1),
-(14, 10, 1),
-(15, 10, 2),
-(16, 11, 1),
-(17, 12, 1);
 
 -- --------------------------------------------------------
 
@@ -195,6 +160,19 @@ CREATE TABLE `kedvencek` (
 INSERT INTO `kedvencek` (`id`, `user_id`, `film_id`, `sorozat_id`, `added_at`) VALUES
 (13, 15, 10, NULL, '2026-01-30 13:06:40'),
 (28, 15, NULL, 106, '2026-02-01 21:03:08');
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `media_orszagok`
+--
+
+CREATE TABLE `media_orszagok` (
+  `id` int NOT NULL,
+  `nemzetiseg_id` int NOT NULL,
+  `film_id` int DEFAULT NULL,
+  `sorozat_id` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -356,9 +334,6 @@ INSERT INTO `reviews` (`id`, `user_id`, `film_id`, `sorozat_id`, `rating`, `comm
 (11, 15, NULL, 106, 3, 'nagyon gyengfe volt eredet történetként', '2026-02-01 21:03:03'),
 (14, 16, 3, NULL, 10, 'nagyon jó film, elképesztő látványvilággat. Zs-nek csak ajánlani tudom', '2026-02-01 21:30:27'),
 (18, 15, 10, NULL, 8, 'asdfsfs', '2026-02-02 15:00:55'),
-(19, 14, 10, NULL, 9, 'elképesztő', '2026-02-02 15:03:37'),
-(24, 16, 2, NULL, 1, 'gatya', '2026-02-02 17:21:15'),
-(26, 16, 10, NULL, 1, 'adada', '2026-02-21 11:40:33'),
 (27, 16, 9, NULL, 10, 'adad', '2026-02-21 11:40:39');
 
 -- --------------------------------------------------------
@@ -414,40 +389,6 @@ INSERT INTO `sorozatok` (`id`, `cim`, `leiras`, `poszter_url`, `elozetes_url`, `
 (110, 'The Witcher', 'Ríviai Geralt, a magányos szörnyvadász küzd, hogy megtalálja helyét a világban, ahol az emberek gyakran gonoszabbak, mint a bestiák.', 'https://image.tmdb.org/t/p/original/7vjaCdMw15FEbXyLQTVa04URsPm.jpg', 'ndl1W4ltcmg', 2019, '', 3, 60, 8.0, 20, 'fantasy', '2026-01-28 18:01:57', 8.0),
 (111, 'Loki', 'A Bosszúállók: Végjáték eseményei után Loki a titokzatos Idővariációs Hatósághoz kerül.', 'https://image.tmdb.org/t/p/original/voHUmluYmKyleFkTu3lOXQG702u.jpg', 'nW948Va-l10', 2021, '2023', 2, 50, 8.2, 21, 'scifi', '2026-01-28 18:01:57', 8.2),
 (112, 'Severance', 'Mark egy olyan csapatot vezet, akiknek emlékeit sebészeti úton különítették el a munka és a magánélet között.', 'https://static.sorozatjunkie.hu/wp-content/uploads/2025/12/Severance-Kulonvalas-2.-evad-Apple-TV.jpg', 'VwP6M9zS_pQ', 2022, '', 2, 50, 8.7, 22, 'thriller', '2026-01-28 18:01:57', 8.7);
-
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `sorozat_gyarto_orszagok`
---
-
-CREATE TABLE `sorozat_gyarto_orszagok` (
-  `id` int NOT NULL,
-  `sorozat_id` int NOT NULL,
-  `nemzetiseg_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- A tábla adatainak kiíratása `sorozat_gyarto_orszagok`
---
-
-INSERT INTO `sorozat_gyarto_orszagok` (`id`, `sorozat_id`, `nemzetiseg_id`) VALUES
-(1, 101, 1),
-(2, 102, 1),
-(3, 103, 1),
-(4, 104, 1),
-(5, 104, 3),
-(6, 105, 1),
-(7, 106, 1),
-(8, 107, 1),
-(9, 107, 5),
-(10, 108, 1),
-(11, 109, 1),
-(12, 109, 2),
-(13, 110, 1),
-(14, 110, 2),
-(15, 111, 1),
-(16, 112, 1);
 
 -- --------------------------------------------------------
 
@@ -544,14 +485,6 @@ ALTER TABLE `filmek`
   ADD KEY `rendezo_id` (`rendezo_id`);
 
 --
--- A tábla indexei `film_gyarto_orszagok`
---
-ALTER TABLE `film_gyarto_orszagok`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `film_id` (`film_id`),
-  ADD KEY `nemzetiseg_id` (`nemzetiseg_id`);
-
---
 -- A tábla indexei `kategoriak`
 --
 ALTER TABLE `kategoriak`
@@ -563,6 +496,15 @@ ALTER TABLE `kategoriak`
 ALTER TABLE `kedvencek`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
+  ADD KEY `film_id` (`film_id`),
+  ADD KEY `sorozat_id` (`sorozat_id`);
+
+--
+-- A tábla indexei `media_orszagok`
+--
+ALTER TABLE `media_orszagok`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `nemzetiseg_id` (`nemzetiseg_id`),
   ADD KEY `film_id` (`film_id`),
   ADD KEY `sorozat_id` (`sorozat_id`);
 
@@ -618,14 +560,6 @@ ALTER TABLE `sorozatok`
   ADD KEY `rendezo_id` (`rendezo_id`);
 
 --
--- A tábla indexei `sorozat_gyarto_orszagok`
---
-ALTER TABLE `sorozat_gyarto_orszagok`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `sorozat_id` (`sorozat_id`),
-  ADD KEY `nemzetiseg_id` (`nemzetiseg_id`);
-
---
 -- A tábla indexei `users`
 --
 ALTER TABLE `users`
@@ -664,7 +598,7 @@ ALTER TABLE `custom_lists`
 -- AUTO_INCREMENT a táblához `custom_list_items`
 --
 ALTER TABLE `custom_list_items`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT a táblához `filmek`
@@ -673,16 +607,16 @@ ALTER TABLE `filmek`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT a táblához `film_gyarto_orszagok`
---
-ALTER TABLE `film_gyarto_orszagok`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
---
 -- AUTO_INCREMENT a táblához `kedvencek`
 --
 ALTER TABLE `kedvencek`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+
+--
+-- AUTO_INCREMENT a táblához `media_orszagok`
+--
+ALTER TABLE `media_orszagok`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT a táblához `media_platformok`
@@ -725,12 +659,6 @@ ALTER TABLE `search_history`
 --
 ALTER TABLE `sorozatok`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
-
---
--- AUTO_INCREMENT a táblához `sorozat_gyarto_orszagok`
---
-ALTER TABLE `sorozat_gyarto_orszagok`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT a táblához `users`
@@ -776,19 +704,20 @@ ALTER TABLE `filmek`
   ADD CONSTRAINT `filmek_ibfk_2` FOREIGN KEY (`rendezo_id`) REFERENCES `rendezok` (`id`) ON DELETE SET NULL;
 
 --
--- Megkötések a táblához `film_gyarto_orszagok`
---
-ALTER TABLE `film_gyarto_orszagok`
-  ADD CONSTRAINT `film_gyarto_orszagok_ibfk_1` FOREIGN KEY (`film_id`) REFERENCES `filmek` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `film_gyarto_orszagok_ibfk_2` FOREIGN KEY (`nemzetiseg_id`) REFERENCES `nemzetisegek` (`id`) ON DELETE CASCADE;
-
---
 -- Megkötések a táblához `kedvencek`
 --
 ALTER TABLE `kedvencek`
   ADD CONSTRAINT `kedvencek_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `kedvencek_ibfk_2` FOREIGN KEY (`film_id`) REFERENCES `filmek` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `kedvencek_ibfk_3` FOREIGN KEY (`sorozat_id`) REFERENCES `sorozatok` (`id`) ON DELETE CASCADE;
+
+--
+-- Megkötések a táblához `media_orszagok`
+--
+ALTER TABLE `media_orszagok`
+  ADD CONSTRAINT `media_orszagok_ibfk_1` FOREIGN KEY (`nemzetiseg_id`) REFERENCES `nemzetisegek` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `media_orszagok_ibfk_2` FOREIGN KEY (`film_id`) REFERENCES `filmek` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `media_orszagok_ibfk_3` FOREIGN KEY (`sorozat_id`) REFERENCES `sorozatok` (`id`) ON DELETE CASCADE;
 
 --
 -- Megkötések a táblához `media_platformok`
@@ -818,13 +747,6 @@ ALTER TABLE `search_history`
 ALTER TABLE `sorozatok`
   ADD CONSTRAINT `sorozatok_ibfk_1` FOREIGN KEY (`kategoria_id`) REFERENCES `kategoriak` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `sorozatok_ibfk_2` FOREIGN KEY (`rendezo_id`) REFERENCES `rendezok` (`id`) ON DELETE SET NULL;
-
---
--- Megkötések a táblához `sorozat_gyarto_orszagok`
---
-ALTER TABLE `sorozat_gyarto_orszagok`
-  ADD CONSTRAINT `sorozat_gyarto_orszagok_ibfk_1` FOREIGN KEY (`sorozat_id`) REFERENCES `sorozatok` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `sorozat_gyarto_orszagok_ibfk_2` FOREIGN KEY (`nemzetiseg_id`) REFERENCES `nemzetisegek` (`id`) ON DELETE CASCADE;
 
 --
 -- Megkötések a táblához `user_favorite_categories`
