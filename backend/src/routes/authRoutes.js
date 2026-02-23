@@ -12,5 +12,6 @@ router.post('/login', authController.login);
 
 // Profil frissítése (Védett útvonal!)
 router.put('/update-profile', protect, authController.updateProfile);
+router.get('/me', protect, authController.getMe);
 
 module.exports = router;

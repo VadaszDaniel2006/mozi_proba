@@ -116,6 +116,36 @@ function App() {
       } catch (error) { console.error(error); setLoading(false); showNotification("Nem sikerült kapcsolódni a szerverhez!", "info"); }
   }, []);
 
+  useEffect(() => {
+      const checkLoggedInUser = async () => {
+          const token = localStorage.getItem('token');
+          if (token) {
+              try {
+                  const res = await fetch('http://localhost:5000/api/auth/me', {
+                      method: 'GET',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${token}`
+                      }
+                  });
+
+                  if (res.ok) {
+                      const data = await res.json();
+                      setUser(data.user); // Visszaállítjuk a user statet
+                  } else {
+                      // Ha a token lejárt vagy érvénytelen, kitöröljük
+                      localStorage.removeItem('token');
+                      setUser(null);
+                  }
+              } catch (error) {
+                  console.error("Nem sikerült az auto-login:", error);
+              }
+          }
+      };
+
+      checkLoggedInUser();
+  }, []);
+
   useEffect(() => { fetchAllData(); }, [fetchAllData]);
   useEffect(() => { if (featuredMovies.length === 0) return; const interval = setInterval(() => { setCurrentSlide((prev) => (prev + 1) % featuredMovies.length); }, 8000); return () => clearInterval(interval); }, [featuredMovies]);
   useEffect(() => { window.onscroll = () => setScrolled(window.pageYOffset > 50); return () => (window.onscroll = null); }, []);

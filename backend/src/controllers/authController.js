@@ -21,7 +21,6 @@ exports.register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // BESZÚRÁS: 'nev' oszlopba írjuk a 'name' változót!
         const sql = `INSERT INTO users (nev, email, password_hash, username, role, regisztracio_datum) VALUES (?, ?, ?, ?, 'user', NOW())`;
         const [result] = await db.query(sql, [name, email, hashedPassword, username]);
         const newUserId = result.insertId;
@@ -45,7 +44,7 @@ exports.register = async (req, res) => {
     }
 };
 
-// --- BEJELENTKEZÉS (JAVÍTVA) ---
+// --- BEJELENTKEZÉS ---
 exports.login = async (req, res) => {
     const { email, password } = req.body;
 
@@ -76,11 +75,7 @@ exports.login = async (req, res) => {
                 username: user.username, 
                 email: user.email,
                 avatar: user.avatar || "https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png",
-                
-                // --- EZ HIÁNYZOTT: A ROLE MEZŐ ---
                 role: user.role, 
-                // ---------------------------------
-                
                 favoriteCategories: favoriteCategoriesList
             }
         });
@@ -91,26 +86,49 @@ exports.login = async (req, res) => {
     }
 };
 
-// --- PROFIL FRISSÍTÉSE (JAVÍTOTT) ---
+// --- PROFIL FRISSÍTÉSE (JAVÍTOTT: JELSZÓVAL EGYÜTT) ---
 exports.updateProfile = async (req, res) => {
     const userId = req.user.id;
-    const userRole = req.user.role; // A tokenből kinyerjük a rangot
-    const { name, username, avatar, favoriteCategories } = req.body;
+    const userRole = req.user.role; 
+    const { name, username, avatar, favoriteCategories, currentPassword, newPassword } = req.body;
 
     console.log(`Profil frissítés: UserID=${userId}, Név=${name}`);
 
     try {
-        // 1. ADATOK FRISSÍTÉSE
-        const sql = `UPDATE users SET nev = ?, username = ?, avatar = ? WHERE id = ?`;
-        
-        await db.query(sql, [name, username, avatar, userId]);
+        let passwordSql = "";
+        let queryParams = [name, username, avatar];
+
+        // --- ÚJ: JELSZÓ ELLENŐRZÉSE ÉS CSERÉJE ---
+        if (currentPassword && newPassword) {
+            // Lekérjük a felhasználó jelenlegi jelszavát az adatbázisból
+            const [users] = await db.query('SELECT password_hash FROM users WHERE id = ?', [userId]);
+            if (users.length === 0) return res.status(404).json({ message: "Felhasználó nem található." });
+
+            // Ellenőrizzük a régit
+            const isMatch = await bcrypt.compare(currentPassword, users[0].password_hash);
+            if (!isMatch) {
+                return res.status(400).json({ message: "A megadott jelenlegi jelszó hibás!" });
+            }
+
+            // Ha jó a régi, titkosítjuk az újat és hozzáadjuk a mentéshez
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(newPassword, salt);
+            
+            passwordSql = ", password_hash = ?";
+            queryParams.push(hashedPassword);
+        }
+
+        // Befejezzük az SQL query paramétereinek feltöltését a végére
+        queryParams.push(userId);
+
+        // 1. ADATOK FRISSÍTÉSE (Dinamikus SQL a jelszó miatt)
+        const sql = `UPDATE users SET nev = ?, username = ?, avatar = ?${passwordSql} WHERE id = ?`;
+        await db.query(sql, queryParams);
 
         // 2. KATEGÓRIÁK CSERÉJE
         if (favoriteCategories && Array.isArray(favoriteCategories)) {
-            // Törlés
             await db.query('DELETE FROM user_favorite_categories WHERE user_id = ?', [userId]);
             
-            // Újra beszúrás
             if (favoriteCategories.length > 0) {
                 const categoryValues = favoriteCategories.map(cat => [userId, cat]);
                 await db.query('INSERT INTO user_favorite_categories (user_id, category_id) VALUES ?', [categoryValues]);
@@ -124,11 +142,7 @@ exports.updateProfile = async (req, res) => {
                 name: name,
                 username: username,
                 avatar: avatar,
-                
-                // --- ITT IS VISSZA KELL ADNI A ROLE-T, HOGY NE VESSZEN EL ---
                 role: userRole,
-                // -----------------------------------------------------------
-                
                 favoriteCategories: favoriteCategories
             }
         });
@@ -140,5 +154,38 @@ exports.updateProfile = async (req, res) => {
              return res.status(500).json({ message: "A kép túl nagy az adatbázisnak!" });
         }
         res.status(500).json({ message: "Szerver hiba történt a mentés közben." });
+    }
+};
+exports.getMe = async (req, res) => {
+    try {
+        // A tokenből (req.user) megkapjuk az ID-t, lekérjük a user adatait
+        const [users] = await db.query('SELECT id, nev, username, email, avatar, role FROM users WHERE id = ?', [req.user.id]);
+        
+        if (users.length === 0) return res.status(404).json({ message: 'Felhasználó nem található' });
+
+        const user = users[0];
+
+        // Kategóriák betöltése, hogy meglegyen a profil szerkesztőnek is
+        let favoriteCategoriesList = [];
+        try {
+            const [categoriesDB] = await db.query('SELECT category_id FROM user_favorite_categories WHERE user_id = ?', [user.id]);
+            favoriteCategoriesList = categoriesDB.map(row => row.category_id);
+        } catch (e) { console.warn("Kategória betöltési hiba:", e.message); }
+
+        res.status(200).json({
+            user: {
+                id: user.id,
+                name: user.nev,
+                username: user.username, 
+                email: user.email,
+                avatar: user.avatar || "https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png",
+                role: user.role, 
+                favoriteCategories: favoriteCategoriesList
+            }
+        });
+
+    } catch (error) {
+        console.error("Hiba a profil lekérésekor:", error);
+        res.status(500).json({ message: 'Szerver hiba történt.' });
     }
 };

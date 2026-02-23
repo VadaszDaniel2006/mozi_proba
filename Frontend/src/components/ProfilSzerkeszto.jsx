@@ -15,14 +15,18 @@ const CATEGORIES = [
 ];
 
 export default function ProfilSzerkeszto({ user, onClose, onSave }) {
-    // Űrlap állapotok
+    // Űrlap állapotok (Email eltávolítva)
     const [formData, setFormData] = useState({
         name: user.name || '',
         username: user.username || '',
-        email: user.email || '',
         avatar: user.avatar || 'https://via.placeholder.com/150',
         favoriteCategories: user.favoriteCategories || []
     });
+
+    // --- ÚJ: JELSZÓ ÁLLAPOTOK ---
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const [previewImage, setPreviewImage] = useState(user.avatar || 'https://via.placeholder.com/150');
     const [isLoading, setIsLoading] = useState(false);
@@ -72,7 +76,7 @@ export default function ProfilSzerkeszto({ user, onClose, onSave }) {
             // HOZZÁADÁS
             if (newCategories.length < 5) {
                 newCategories.push(catId);
-                setStatusMessage({ type: '', text: '' }); // Ha sikeresen hozzáadott, töröljük a hibaüzenetet
+                setStatusMessage({ type: '', text: '' }); 
             } else {
                 setStatusMessage({ type: 'error', text: '⚠️ Legfeljebb 5 kategóriát választhatsz!' });
             }
@@ -84,15 +88,31 @@ export default function ProfilSzerkeszto({ user, onClose, onSave }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // --- ÚJ ELLENŐRZÉS: LEGALÁBB 1 KATEGÓRIA ---
+        // ELLENŐRZÉS: LEGALÁBB 1 KATEGÓRIA
         if (formData.favoriteCategories.length === 0) {
             setStatusMessage({ type: 'error', text: '⚠️ Legalább egy kategóriát kötelező kiválasztani!' });
-            return; // Itt megállítjuk a folyamatot, nem küldjük el a szervernek
+            return; 
         }
-        // -------------------------------------------
+
+        // --- ÚJ: JELSZÓ VALIDÁCIÓ ---
+        if (newPassword || currentPassword) {
+            if (!currentPassword) {
+                setStatusMessage({ type: 'error', text: '⚠️ Az új jelszó beállításához meg kell adnod a jelenlegit!' });
+                return;
+            }
+            if (newPassword.length < 6) {
+                setStatusMessage({ type: 'error', text: '⚠️ Az új jelszónak legalább 6 karakternek kell lennie!' });
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                setStatusMessage({ type: 'error', text: '⚠️ A két új jelszó nem egyezik meg!' });
+                return;
+            }
+        }
+        // -----------------------------
 
         setIsLoading(true);
-        setStatusMessage({ type: '', text: '' }); // Előző üzenetek törlése
+        setStatusMessage({ type: '', text: '' });
 
         try {
             const token = localStorage.getItem('token');
@@ -106,23 +126,23 @@ export default function ProfilSzerkeszto({ user, onClose, onSave }) {
                     name: formData.name,
                     username: formData.username,
                     avatar: formData.avatar,
-                    favoriteCategories: formData.favoriteCategories
+                    favoriteCategories: formData.favoriteCategories,
+                    // ÚJ: jelszavakat is küldjük, ha módosítani akarja
+                    currentPassword: currentPassword || undefined,
+                    newPassword: newPassword || undefined
                 })
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                // SIKERES MENTÉS
                 setStatusMessage({ type: 'success', text: '✅ Profil sikeresen mentve!' });
-                onSave(data.user); // Frissítjük a szülő komponenst
+                onSave(data.user); 
                 
-                // 1.5 másodperc múlva bezárjuk az ablakot
                 setTimeout(() => {
                     onClose();
                 }, 1500);
             } else {
-                // HIBA TÖRTÉNT
                 setStatusMessage({ type: 'error', text: `❌ ${data.message || 'Hiba történt a mentéskor.'}` });
             }
         } catch (error) {
@@ -137,30 +157,21 @@ export default function ProfilSzerkeszto({ user, onClose, onSave }) {
         <div className="profile-modal-overlay" onClick={onClose}>
             <div className="profile-modal-content" onClick={e => e.stopPropagation()}>
                 
-                {/* FEJLÉC */}
                 <div className="profile-modal-header">
                     <h3><i className="fas fa-user-edit"></i> Profil szerkesztése</h3>
                     <button className="profile-close-modal" onClick={onClose}>&times;</button>
                 </div>
 
-                {/* TARTALOM */}
                 <div className="profile-modal-body">
                     
-                    {/* --- ÜZENET SÁV (ALERT HELYETT) --- */}
                     {statusMessage.text && (
                         <div style={{
-                            padding: '15px',
-                            borderRadius: '8px',
-                            marginBottom: '20px',
-                            textAlign: 'center',
-                            fontWeight: 'bold',
-                            fontSize: '1rem',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                            padding: '15px', borderRadius: '8px', marginBottom: '20px', textAlign: 'center',
+                            fontWeight: 'bold', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
                             backgroundColor: statusMessage.type === 'error' ? 'rgba(231, 76, 60, 0.2)' : 'rgba(46, 204, 113, 0.2)',
                             color: statusMessage.type === 'error' ? '#ff6b6b' : '#2ecc71',
                             border: `1px solid ${statusMessage.type === 'error' ? '#ff6b6b' : '#2ecc71'}`,
-                            boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-                            animation: 'slideIn 0.3s ease-out'
+                            boxShadow: '0 4px 15px rgba(0,0,0,0.3)', animation: 'slideIn 0.3s ease-out'
                         }}>
                             {statusMessage.text}
                         </div>
@@ -182,10 +193,8 @@ export default function ProfilSzerkeszto({ user, onClose, onSave }) {
                                 />
                                 <label htmlFor="avatar-upload" style={{ 
                                     position: 'absolute', bottom: '10px', right: '10px', 
-                                    background: '#3e50ff', color: 'white', 
-                                    width: '40px', height: '40px', borderRadius: '50%', 
-                                    display: 'flex', justifyContent: 'center', alignItems: 'center', 
-                                    cursor: 'pointer', boxShadow: '0 5px 15px rgba(0,0,0,0.5)',
+                                    background: '#3e50ff', color: 'white', width: '40px', height: '40px', borderRadius: '50%', 
+                                    display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', boxShadow: '0 5px 15px rgba(0,0,0,0.5)',
                                     transition: 'transform 0.2s'
                                 }} title="Kép módosítása">
                                     <i className="fas fa-camera"></i>
@@ -211,10 +220,27 @@ export default function ProfilSzerkeszto({ user, onClose, onSave }) {
                                 <input type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Pl. kissjanos99" />
                             </div>
 
+                            {/* --- ÚJ: JELSZÓ MÓDOSÍTÁSA SZEKCIÓ --- */}
+                            <h4 style={{ marginTop: '25px', marginBottom: '15px', color: 'white', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>
+                                <i className="fas fa-lock"></i> Jelszó módosítása <span style={{fontSize: '0.8rem', color: '#888'}}>(Opcionális)</span>
+                            </h4>
+                            
                             <div className="profile-input-group">
-                                <label>Email cím (Nem módosítható)</label>
-                                <input type="email" name="email" value={formData.email} disabled />
+                                <label>Jelenlegi jelszó</label>
+                                <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="Ide írd a régit, ha módosítani akarod..." />
                             </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                                <div className="profile-input-group">
+                                    <label>Új jelszó</label>
+                                    <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} disabled={!currentPassword} />
+                                </div>
+                                <div className="profile-input-group">
+                                    <label>Új jelszó újra</label>
+                                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} disabled={!currentPassword} />
+                                </div>
+                            </div>
+                            {/* ------------------------------------- */}
                         </div>
                     </div>
 
@@ -240,26 +266,16 @@ export default function ProfilSzerkeszto({ user, onClose, onSave }) {
                             ))}
                         </div>
 
-                        {/* SZÁMLÁLÓ (LEJJEBB HELYEZVE) */}
                         <div style={{ 
-                            marginTop: '15px', 
-                            textAlign: 'right', 
-                            color: '#ccc',
-                            fontSize: '1rem',
-                            display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '8px'
+                            marginTop: '15px', textAlign: 'right', color: '#ccc', fontSize: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '8px'
                         }}>
                              <i className="fas fa-check-circle" style={{ 
                                  color: formData.favoriteCategories.length >= 1 && formData.favoriteCategories.length <= 5 ? '#2ecc71' : '#ff6b6b' 
                              }}></i>
                             Kiválasztva: 
                             <span style={{ 
-                                color: 'white', 
-                                fontWeight: 'bold', 
-                                fontSize: '1.2rem',
-                                background: formData.favoriteCategories.length === 0 ? 'rgba(255, 107, 107, 0.2)' : 'rgba(62, 80, 255, 0.2)',
-                                padding: '2px 10px',
-                                borderRadius: '4px',
-                                border: `1px solid ${formData.favoriteCategories.length === 0 ? '#ff6b6b' : 'rgba(62, 80, 255, 0.5)'}`
+                                color: 'white', fontWeight: 'bold', fontSize: '1.2rem', background: formData.favoriteCategories.length === 0 ? 'rgba(255, 107, 107, 0.2)' : 'rgba(62, 80, 255, 0.2)',
+                                padding: '2px 10px', borderRadius: '4px', border: `1px solid ${formData.favoriteCategories.length === 0 ? '#ff6b6b' : 'rgba(62, 80, 255, 0.5)'}`
                             }}>
                                 {formData.favoriteCategories.length}
                             </span> 
@@ -291,7 +307,6 @@ export default function ProfilSzerkeszto({ user, onClose, onSave }) {
                 </div>
             </div>
             
-            {/* Animáció stílus */}
             <style>{`
                 @keyframes slideIn {
                     from { opacity: 0; transform: translateY(-10px); }
