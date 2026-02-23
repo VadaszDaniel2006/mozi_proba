@@ -71,7 +71,6 @@ exports.getFavorites = async (req, res) => {
     } catch (err) { console.error("SQL Hiba (Favorites):", err); res.status(500).json({ message: "Szerver hiba." }); }
 };
 
-// --- JAVÍTOTT TÖRLÉS (Kezeli a FilmID-t is) ---
 exports.removeFromFavorites = async (req, res) => {
     const { userId, itemId, filmId, sorozatId } = req.body;
     try {
@@ -139,7 +138,6 @@ exports.getMyList = async (req, res) => {
     } catch (err) { console.error("SQL Hiba (MyList):", err); res.status(500).json({ message: "Szerver hiba" }); }
 };
 
-// --- JAVÍTOTT TÖRLÉS (Kezeli a FilmID-t is) ---
 exports.removeFromMyList = async (req, res) => {
     const { userId, itemId, filmId, sorozatId } = req.body; 
     try {
@@ -160,7 +158,7 @@ exports.removeFromMyList = async (req, res) => {
     } catch (err) { console.error("Lista törlési hiba:", err); res.status(500).json({ message: "Hiba törléskor." }); }
 };
 
-// --- VÉLEMÉNYEK (Változatlan) ---
+// --- VÉLEMÉNYEK ---
 exports.getReviews = async (req, res) => {
     const { type, id } = req.params; 
     try {
@@ -187,15 +185,30 @@ exports.addReview = async (req, res) => {
     } catch (err) { console.error("Hiba:", err); res.status(500).json({ message: "Szerver hiba." }); }
 };
 
+// --- JAVÍTOTT TÖRLÉS: ADMIN JOGOSULTSÁG ELLENŐRZÉSE ---
 exports.deleteReview = async (req, res) => {
     const { userId, reviewId } = req.body;
     try {
-        const [review] = await db.query('SELECT film_id, sorozat_id FROM reviews WHERE id = ? AND user_id = ?', [reviewId, userId]);
-        if (review.length === 0) return res.status(404).json({ message: "Hiba." });
+        // 1. Lekérdezzük a usert, hogy admin-e
+        const [userRows] = await db.query('SELECT role FROM users WHERE id = ?', [userId]);
+        const isAdmin = userRows.length > 0 && userRows[0].role === 'admin';
+
+        // 2. Megkeressük a törlendő véleményt
+        const [review] = await db.query('SELECT film_id, sorozat_id, user_id FROM reviews WHERE id = ?', [reviewId]);
+        if (review.length === 0) return res.status(404).json({ message: "A vélemény nem található." });
+        
+        // 3. Jogosultság ellenőrzése: saját vélemény VAGY admin
+        if (review[0].user_id !== userId && !isAdmin) {
+            return res.status(403).json({ message: "Nincs jogosultságod törölni ezt a véleményt!" });
+        }
+
         const { film_id, sorozat_id } = review[0];
+        
+        // 4. Törlés és átlag frissítés
         await db.query('DELETE FROM reviews WHERE id = ?', [reviewId]);
         await updateAverageRating(film_id, sorozat_id);
-        res.status(200).json({ message: "Törölve!" });
+        
+        res.status(200).json({ message: "Sikeresen törölve!" });
     } catch (err) { console.error(err); res.status(500).json({ message: "Szerver hiba." }); }
 };
 

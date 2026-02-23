@@ -99,14 +99,10 @@ const ReviewsSidebar = ({ isOpen, onClose, movie, user, onShowNotification, onRe
         return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     };
 
-    // --- EZ A FÜGGVÉNY KEZELI A KÜLÖNBÖZŐ TÍPUSÚ KÉPEKET ---
     const getProfileImageUrl = (avatarData) => {
         if (!avatarData) return null;
-        // 1. Ha a kép Base64 kód (mint a test67 felhasználónál a képen)
         if (avatarData.startsWith('data:')) return avatarData;
-        // 2. Ha a kép külső link (mint a test7 felhasználónál a képen)
         if (avatarData.startsWith('http')) return avatarData;
-        // 3. Ha helyi fájl (pl. uploads mappából)
         return `http://localhost:5000${avatarData}`;
     };
 
@@ -155,7 +151,6 @@ const ReviewsSidebar = ({ isOpen, onClose, movie, user, onShowNotification, onRe
                                             <div className="review-card-header">
                                                 <div className="user-info">
                                                     
-                                                    {/* --- PROFILKÉP MEGJELENÍTÉSE --- */}
                                                     {review.avatar ? (
                                                         <img 
                                                             src={getProfileImageUrl(review.avatar)} 
@@ -168,7 +163,6 @@ const ReviewsSidebar = ({ isOpen, onClose, movie, user, onShowNotification, onRe
                                                                 objectFit: 'cover', 
                                                                 marginRight: '10px'
                                                             }}
-                                                            // Ha a kép linkje hibás lenne, fallback a betűre
                                                             onError={(e) => {
                                                                 e.target.style.display = 'none';
                                                                 e.target.nextSibling.style.display = 'flex';
@@ -176,11 +170,9 @@ const ReviewsSidebar = ({ isOpen, onClose, movie, user, onShowNotification, onRe
                                                         />
                                                     ) : null}
                                                     
-                                                    {/* Fallback, ha nincs kép, vagy hiba történt a betöltéskor */}
                                                     <div className="user-avatar-placeholder" style={{display: review.avatar ? 'none' : 'flex'}}>
                                                         {getInitials(review.username)}
                                                     </div>
-                                                    {/* ---------------------------------- */}
 
                                                     <div>
                                                         <div className="user-name">{review.username}</div>
@@ -193,7 +185,9 @@ const ReviewsSidebar = ({ isOpen, onClose, movie, user, onShowNotification, onRe
                                                 </div>
                                             </div>
                                             <p className="review-text">{review.comment}</p>
-                                            {user && user.username === review.username && (
+                                            
+                                            {/* --- JAVÍTOTT RÉSZ: Adminok is látják a kukát --- */}
+                                            {user && (user.username === review.username || user.role === 'admin') && (
                                                 <button className="delete-review-icon" onClick={() => initiateDelete(review.id)} title="Törlés">
                                                     <i className="fas fa-trash"></i>
                                                 </button>
